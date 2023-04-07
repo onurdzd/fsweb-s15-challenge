@@ -16,8 +16,8 @@ const getBy = (filtre) => {
 };
 
 const create = async (bilmece) => {
-  const newBilmeceId = await db("bilmeceler").insert(bilmece);
-  const newBilmece = await getBy("bilmece_id", newBilmeceId);
+  const newBilmeceId = await db("bilmeceler").insert({bilmece:bilmece,user_id:1});
+  const newBilmece = await getBy({"bilmece_id": newBilmeceId});
   return newBilmece;
 };
 

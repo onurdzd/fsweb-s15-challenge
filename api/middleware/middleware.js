@@ -44,7 +44,8 @@ const kullaniciBilgileriGecerlimi = async (req, res, next) => {
       let token = jwt.sign(
         {
           username: isValidUser.username,
-          role: isValidUser.role,
+          role_name: isValidUser.role_name,
+          user_id:isValidUser.id
         },
         process.env.SECRET,
         { expiresIn: "12h" }
