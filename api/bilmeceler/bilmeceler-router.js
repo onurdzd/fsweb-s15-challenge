@@ -2,6 +2,7 @@
 const router = require('express').Router();
 const Bilmece=require("./bilmeceler-model")
 const mw=require("../middleware/middleware")
+const jwt=require("jsonwebtoken")
 
 router.get('/', async(req, res,next) => {
   try {
@@ -14,7 +15,9 @@ router.get('/', async(req, res,next) => {
 
 router.post("/",mw.adminYetkisi("admin"), async(req, res, next) => { 
  try {
-  const newBilmece=await Bilmece.create(req.body.bilmece)
+  const token = req.headers.authorization;
+  const decodedJWT = jwt.verify(token, process.env.SECRET);
+  const newBilmece=await Bilmece.create(req.body.bilmece,decodedJWT.user_id)
   res.status(201).json(newBilmece)
  } catch (error) {
   next(error)

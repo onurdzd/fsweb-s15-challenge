@@ -1,3 +1,4 @@
+const { verify } = require("jsonwebtoken");
 const db = require("../../data/dbConfig");
 
 const getAll = () => {
@@ -15,9 +16,13 @@ const getBy = (filtre) => {
     .first();
 };
 
-const create = async (bilmece) => {
-  const newBilmeceId = await db("bilmeceler").insert({bilmece:bilmece,user_id:1});
-  const newBilmece = await getBy({"bilmece_id": newBilmeceId});
+const create = async (bilmece,user_id) => {
+  
+  const newBilmeceId = await db("bilmeceler").insert({
+    bilmece: bilmece,
+    user_id: user_id,
+  });
+  const newBilmece = await getBy({ bilmece_id: newBilmeceId });
   return newBilmece;
 };
 
