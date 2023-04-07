@@ -2,14 +2,21 @@ const router = require('express').Router();
 const mw=require("../middleware/middleware")
 const Users=require("./auth-model")
 const bcrypt = require('bcryptjs');
+const restricted=require("../middleware/restricted")
+
+
+router.get("/",async(req,res,next)=>{
+  const users=await Users.getAll()
+  res.status(200).json(users)
+})
 
 router.post('/register',mw.postIstegiGeçerlimi,mw.kullaniciAdiVarmi,async (req, res,next) => {
   try {
-    let {username,password,role}=req.body
-    !role ? role="rookie" : role=role
+    let {username,password,role_name}=req.body
+    !role_name ? role_name="user" : role_name=req.body.role_name
     const hashedPassword=bcrypt.hashSync(password,8) 
-    const newUser=await Users.create({username:username,password:hashedPassword,role:role})
-    res.status(201).json(newUser)
+    const newUser=await Users.create({username:username,password:hashedPassword,role_name:role_name})
+    res.status(201).json({id:newUser.id,username:newUser.username,password:newUser.password})
   } catch (error) {
     next(error)
   }
