@@ -1,7 +1,18 @@
 const router = require('express').Router();
+const mw=require("../middleware/middleware")
+const Users=require("./auth-model")
+const bcrypt = require('bcryptjs');
 
-router.post('/register', (req, res) => {
-  res.end('kayıt olmayı ekleyin, lütfen!');
+router.post('/register',mw.postIstegiGeçerlimi,mw.kullaniciAdiVarmi,async (req, res,next) => {
+  try {
+    let {username,password,role}=req.body
+    !role ? role="rookie" : role=role
+    const hashedPassword=bcrypt.hashSync(password,8) 
+    const newUser=await Users.create({username:username,password:hashedPassword,role:role})
+    res.status(201).json(newUser)
+  } catch (error) {
+    next(error)
+  }
   /*
     EKLEYİN
     Uçnoktanın işlevselliğine yardımcı olmak için middlewarelar yazabilirsiniz.
@@ -29,8 +40,13 @@ router.post('/register', (req, res) => {
   */
 });
 
-router.post('/login', (req, res) => {
-  res.end('girişi ekleyin, lütfen!');
+router.post('/login',mw.postIstegiGeçerlimi,mw.kullaniciBilgileriGecerlimi, (req, res,next) => {
+
+  try {
+    res.status(200).json({message:`Welcome, ${req.body.username}`,token:req.token})
+  } catch (error) {
+    next(error)
+  }
   /*
     EKLEYİN
     Uçnoktanın işlevselliğine yardımcı olmak için middlewarelar yazabilirsiniz.
