@@ -2,8 +2,6 @@ const Users = require("../auth/auth-model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-let jwtKey = process.env.SECRET;
-
 const kullaniciAdiVarmi = async (req, res, next) => {
   try {
     const isValid = await Users.getBy({ username: req.body.username });
@@ -48,8 +46,8 @@ const kullaniciBilgileriGecerlimi = async (req, res, next) => {
           username: isValidUser.username,
           role: isValidUser.role,
         },
-        jwtKey,
-        { expiresIn: "1h" }
+        process.env.SECRET,
+        { expiresIn: "12h" }
       );
       req.token = token;
       next();
@@ -69,8 +67,24 @@ const kullaniciBilgileriGecerlimi = async (req, res, next) => {
   }
 };
 
+const adminYetkisi=(role_name)=>(req,res,next)=>{
+  try {
+    if(req.decodedJWT && req.decodedJWT.role_name ===role_name){
+      next()
+    }else{
+      res.status(403).json({
+        message: "Sadece adminler"
+      })
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
+
 module.exports = {
   kullaniciAdiVarmi,
   postIstegiGeçerlimi,
   kullaniciBilgileriGecerlimi,
+  adminYetkisi
 };

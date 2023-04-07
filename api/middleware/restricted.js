@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
-
   try {
     const token = req.headers.authorization;
     if (token) {
@@ -16,8 +15,8 @@ module.exports = (req, res, next) => {
         }
       });
     }else{
-      res.status(401).json(  {
-        "message": "Token gereklidir"
+      res.status(401).json({
+        message: "Token gereklidir"
       })
     }
   } catch (error) {
@@ -35,4 +34,7 @@ module.exports = (req, res, next) => {
     3- Authorization headerında geçersiz veya timeout olmuş token varsa,
 	  response body şu mesajı içermelidir: "token geçersizdir".
   */
+  
 };
+
+
